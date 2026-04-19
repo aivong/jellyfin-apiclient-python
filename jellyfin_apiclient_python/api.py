@@ -319,7 +319,9 @@ class GranularAPIMixin:
         body = self.get_item(item_id)
         body.update(data)
         assert body['Id'] == item_id
-        return self.items('/' + item_id, action='POST', params=None, json=body)
+        # Use user-scoped endpoint for consistency with get_item
+        # This ensures user authentication context is passed to the server
+        return self.users("/Items/%s" % item_id, action='POST', params=None, json=body)
 
     def get_sessions(self):
         return self.sessions(params={'ControllableByUserId': "{UserId}"})
