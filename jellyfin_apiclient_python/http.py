@@ -173,10 +173,12 @@ class HTTP(object):
 
                         raise HTTPException("Unauthorized", error)
 
-                elif r.status_code == 500:  # log and ignore.
+                elif r.status_code == 500:
+                    # 500 errors should not be silently ignored
+                    # The server returned an error response - let the caller know about it
                     LOG.error("--[ 500 response ] %s", error)
 
-                    return
+                    raise HTTPException("InternalServerError", error)
 
                 elif r.status_code == 502:
                     if retry:
